@@ -381,7 +381,7 @@
                 jsPDF
             } = window.jspdf;
             const doc = new jsPDF();
-            doc.text("Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2024", 10, 10);
+            doc.text("Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2025", 10, 10);
             const chartImage = document.getElementById('pendudukChart').toDataURL("image/png");
             doc.addImage(chartImage, 'PNG', 10, 20, 180, 100);
             doc.save('grafik-penduduk.pdf');
@@ -395,7 +395,7 @@
                 Provinsi: label,
                 Jumlah_Penduduk: chartData[index]
             }));
-            const title = "Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2024\n\n";
+            const title = "Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2025\n\n";
             const csv = Papa.unparse(data);
             const blob = new Blob([title + csv], {
                 type: 'text/csv'
@@ -417,7 +417,7 @@
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             const titleRow = [
-                ["Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2024"]
+                ["Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2025"]
             ];
             XLSX.utils.sheet_add_aoa(ws, titleRow, {
                 origin: 'A1'
