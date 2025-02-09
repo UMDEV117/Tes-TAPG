@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('penduduks', function (Blueprint $table) {
             $table->id();
             $table->string('provinsi');
-            $table->integer('jumlah');
+            $table->integer('Total');
             $table->timestamps();
         });
         

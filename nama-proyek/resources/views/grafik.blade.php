@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grafik Penduduk Indonesia 2024</title>
+    <title>Grafik Penduduk Indonesia 2025S</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- jsPDF Library (for PDF export) -->
@@ -225,7 +225,7 @@
                 </form>
             </div>
 
-            <h1 class="text-center mb-4">Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2024</h1>
+            <h1 class="text-center mb-4">Grafik Jumlah Penduduk Indonesia per Provinsi Tahun 2025</h1>
             <div class="card shadow-sm">
                 <div class="card-body">
                     <canvas id="pendudukChart" class="w-100" height="400"></canvas>
@@ -237,7 +237,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 20225 Grafik Penduduk Indonesia. All Rights Reserved.</p>
+        <p>&copy; 2025 Grafik Penduduk Indonesia. All Rights Reserved.</p>
         <p><a href="#">Khoerul Umam </a> | <a href="#">Tes TAPG</a></p>
     </footer>
 
@@ -247,15 +247,33 @@
     <script>
         var ctx = document.getElementById('pendudukChart').getContext('2d');
         var pendudukChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'line', // Menggunakan grafik line
             data: {
-                labels: {!! json_encode($labels) !!},
+                labels: {!! json_encode($labels) !!}, // Provinsi sebagai label
                 datasets: [{
                     label: 'Jumlah Penduduk',
-                    data: {!! json_encode($jumlah) !!},
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
+                    data: {!! json_encode($jumlah) !!}, // Data jumlah penduduk
+                    backgroundColor: 'rgba(0, 102, 255, 0.3)', // Area bawah garis lebih terlihat
+                    borderColor: 'rgba(0, 102, 255, 1)', // Warna garis lebih pekat
+                    pointBackgroundColor: 'rgba(255, 0, 0, 1)', // Titik data lebih kontras
+                    pointBorderColor: 'rgba(255, 255, 255, 1)', // Pinggiran titik
+                    pointRadius: 7, // Ukuran titik diperbesar
+                    pointHoverRadius: 10, // Ukuran titik saat hover lebih besar
+                    borderWidth: 4, // Garis lebih tebal
+                    tension: 0.2, // Membuat garis tetap halus
+                    // Menambahkan label di atas titik untuk masing-masing provinsi
+                    datalabels: {
+                        align: 'top',
+                        anchor: 'bottom',
+                        formatter: function(value) {
+                            return value.toLocaleString(); // Menampilkan jumlah dengan format angka
+                        },
+                        font: {
+                            size: 10,
+                            weight: 'bold',
+                        },
+                        color: 'rgba(0, 102, 255, 1)',
+                    }
                 }]
             },
             options: {
@@ -263,11 +281,76 @@
                 maintainAspectRatio: false,
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.3)' // Warna grid lebih lembut
+                        },
+                        ticks: {
+                            font: {
+                                size: 12 // Ukuran font untuk angka di sumbu Y
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.3)' // Warna grid lebih lembut
+                        },
+                        ticks: {
+                            font: {
+                                size: 12, // Ukuran font untuk label di sumbu X
+                                autoSkip: true, // Menghindari tumpang tindih label
+                                maxRotation: 45, // Memutar label jika terlalu banyak
+                                minRotation: 30 // Menjaga label agar tetap mudah dibaca
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 14 // Label legend lebih besar
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItem) {
+                                return 'Provinsi: ' + tooltipItem[0]
+                                    .label; // Menambahkan informasi provinsi pada tooltip
+                            },
+                            label: function(tooltipItem) {
+                                return 'Jumlah Penduduk: ' + tooltipItem.raw
+                                    .toLocaleString(); // Menampilkan jumlah penduduk dengan format angka
+                            }
+                        }
+                    },
+                    // Menambahkan plugin datalabels
+                    datalabels: {
+                        display: true,
+                        align: 'top',
+                        formatter: function(value, context) {
+                            return value.toLocaleString(); // Format angka
+                        }
                     }
                 }
             }
         });
+
+        // Menampilkan total keseluruhan penduduk
+        var totalPenduduk = {!! json_encode($jumlah) !!}.reduce(function(a, b) {
+            return a + b;
+        }, 0);
+
+        var totalPendudukFormatted = totalPenduduk.toLocaleString(); // Format total penduduk
+
+        // Menambahkan total penduduk di bawah grafik
+        var totalPendudukElement = document.createElement('div');
+        totalPendudukElement.innerHTML = '<h6>Total Penduduk Indonesia: ' + totalPendudukFormatted + '</h6>';
+        document.getElementById('content').appendChild(totalPendudukElement);
+
+
+
 
         // Function to toggle Sidebar visibility
         function toggleSidebar() {
